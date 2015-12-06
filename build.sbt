@@ -11,6 +11,7 @@ lazy val root = (project in file(".")).
     sbtPlugin := true,
     name := "play-raml",
     description := "Compile play routes from RAML file",
+    homepage := some(url("https://github.com/bavadim/play-raml")),
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
     publishMavenStyle := false,
     repository in bintray := "sbt-raml-plugins",
