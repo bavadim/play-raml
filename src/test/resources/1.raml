@@ -1,0 +1,35 @@
+#%RAML 1.0
+
+title: Test API
+baseUri: http://127.0.0.1:9000/
+version: v1
+
+/rootMethod:
+ get:
+  description: |
+   controllers.Clients.show3
+/testService:
+ /testMethod:
+  description: OLOLO OLOLO OLOLO
+  get:
+   responses:
+    200:
+     body:
+      application/json:
+       example: |
+        {
+        "data": "OLOLO1"
+        }
+   description: |
+    controllers.Clients.show1
+    Retrieve a test JSON
+ /testMethodWithParam:
+  description: With Param!!!
+  /{param}:
+   uriParameters:
+    param:
+     displayName: User ID
+     description: With Param!!!
+   get:
+    description: |
+     controllers.Clients.show2(id: Long)
