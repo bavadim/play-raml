@@ -23,8 +23,6 @@ object ExtendedRoutesCompiler {
 
     val routeFile = task.file.getAbsoluteFile
 
-    println(routeFile.getName)
-
     parser.parse(routeFile).right.map { rules =>
       val generated = generator.generate(task, namespace, rules)
       generated.map {
