@@ -8,7 +8,7 @@ This plugin inspired by [sbt-play-raml](https://github.com/scalableminds/sbt-pla
 
 - add the following lines to your sbt plugins file project/plugins.sbt:
 
-        addSbtPlugin("bavadim" % "play-raml" % "0.1")
+        addSbtPlugin("bavadim" % "play-raml" % "0.3")
         
         resolvers += Resolver.url("bavadim", url("https://dl.bintray.com/bavadim/sbt-raml-plugins"))(Resolver.ivyStylePatterns)
         

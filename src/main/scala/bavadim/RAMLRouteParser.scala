@@ -89,7 +89,7 @@ class RAMLRouteParser extends RouteParser {
       }
 
       def staticPathPart: Parser[StaticPart] = ("""[\w]""".r +) ^^ {
-        case chars => StaticPart((chars :+ "/").mkString)
+        case chars => StaticPart(chars.mkString)
       }
 
       "/" ~> rep1sep(singleComponentPathPart | staticPathPart, "/") ^^ PathPattern
@@ -174,14 +174,7 @@ class RAMLRouteParser extends RouteParser {
           if (callB.isEmpty) None
           else {
             val comments = r.getAction(a).getDescription.split("\n").tail.map(s => Comment(s)).toList
-            def fixLastSlash(path: PathPattern) = {
-              val last = path.parts.last match {
-                case StaticPart(value) => if (value.last != '/') StaticPart(value) else StaticPart(value.dropRight(1))
-                case e => e
-              }
-              PathPattern(path.parts.dropRight(1) :+ last)
-            }
-            Some(Route(HttpVerb(a.toString), fixLastSlash(path), callB.get, comments))
+            Some(Route(HttpVerb(a.toString), path, callB.get, comments))
           }
         } else None
 
@@ -213,11 +206,21 @@ class RAMLRouteParser extends RouteParser {
       }.toList
     }
 
+    def fixSlashes(l: List[Rule]) = l.collect {
+      case Route(verb, path, call, comments) =>
+        val parts = path.parts.foldLeft(Seq[PathPart]()) {
+          case (acc :+ StaticPart(v1), p) => acc :+ StaticPart(v1 + "/") :+ p
+          case (acc :+ dynPart, StaticPart(v2)) => acc :+ dynPart :+ StaticPart("/" + v2)
+          case (acc, e) => acc :+ e
+        }
+        Route(verb, PathPattern(parts), call, comments)
+    }
+
     Try {
       new RamlDocumentBuilder().build(new ByteArrayInputStream(routesContent.getBytes(StandardCharsets.UTF_8)),
         file.getPath)
     }.map { raml =>
-      Right(parseResources(raml.getResources.asScala.toMap, "", List()))
+      Right(fixSlashes(parseResources(raml.getResources.asScala.toMap, "", List())))
     }.recover {
       case e: Exception => Left(Seq(RoutesCompilationError(file, e.getMessage, None, None)))
     }.get

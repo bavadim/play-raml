@@ -72,6 +72,20 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
+  test("Parser must parse example 4") {
+    val ethalon = List(
+      Route(HttpVerb("PUT"),
+        PathPattern(Seq(StaticPart("mes/"), DynamicPart("id", "[^/]+", true), StaticPart("/sig"))),
+        HandlerCall("controllers", "MessageController", true, "sign", Some(Seq(Parameter("id", "String", None, None)))))
+    )
+
+    parser.parse(file("4.raml")) match {
+      case Right(l) =>
+        assert(l == ethalon)
+      case Left(e) => fail(e.toString())
+    }
+  }
+
   private def file(fileName: String): File = {
     val classLoader = getClass.getClassLoader
     new File(classLoader.getResource(fileName).getFile)
