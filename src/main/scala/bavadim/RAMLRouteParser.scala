@@ -92,7 +92,10 @@ class RAMLRouteParser extends RouteParser {
         case chars => StaticPart(chars.mkString)
       }
 
-      "/" ~> rep1sep(singleComponentPathPart | staticPathPart, "/") ^^ PathPattern
+      rep("/") ~> opt(rep1sep(singleComponentPathPart | staticPathPart, "/")) ^^ {
+        case Some(p) => PathPattern(p)
+        case None => PathPattern(Seq(StaticPart("/")))
+      }
     }
 
     private def several[T](p: => Parser[T]): Parser[List[T]] = Parser { in =>
