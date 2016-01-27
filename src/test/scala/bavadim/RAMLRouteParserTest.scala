@@ -30,7 +30,7 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
 
   )
 
-  test("Parser must parse complex raml from example 1") {
+  test("Parser must parse complex raml") {
     val ethalon = List(
       Route(HttpVerb("GET"),
         PathPattern(Seq(StaticPart("rootMethod"))),
@@ -51,7 +51,7 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
-  test("Parser must parse endpoints with parameters (example 2)") {
+  test("Parser must parse endpoints with parameters") {
     val ethalon = List(
       Route(HttpVerb("GET"),
         PathPattern(Seq(StaticPart("user/"), DynamicPart("userId", "[^/]+", true))),
@@ -65,14 +65,14 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
-  test("Parser must fail on invalid raml (parse example 3)") {
+  test("Parser must fail on invalid raml") {
     parser.parse(file("3.raml")) match {
       case Right(l) => fail(l.toString())
       case _ => succeed
     }
   }
 
-  test("Parser must parse several levels of endpoint defenitions (parse example 4)") {
+  test("Parser must parse several levels of endpoint definitions") {
     val ethalon = List(
       Route(HttpVerb("PUT"),
         PathPattern(Seq(StaticPart("mes/"), DynamicPart("id", "[^/]+", true), StaticPart("/sig"))),
@@ -86,7 +86,7 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
-  test("Parser must correctly work with '/' endpoint (parse example 5)") {
+  test("Parser must correctly work with '/' endpoint") {
     val ethalon = List(
       Route(HttpVerb("GET"),
         PathPattern(Seq(StaticPart("index"))),
@@ -103,7 +103,7 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
-  test("Parser must be able process !include directive (parse example 6)") {
+  test("Parser must be able process !include directive") {
     val ethalon = List(
       Route(HttpVerb("GET"),
         PathPattern(Seq(StaticPart("user/"), DynamicPart("id", "[^/]+", true))),
@@ -114,6 +114,23 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     )
 
     parser.parse(file("6.raml")) match {
+      case Right(l) =>
+        assert(l == ethalon)
+      case Left(e) => fail(e.toString())
+    }
+  }
+
+  test("Parser must be able work with traits and resources") {
+    val ethalon = List(
+      Route(HttpVerb("GET"),
+        PathPattern(Seq(StaticPart("testUrl1"))),
+        HandlerCall("controllers", "Application", true, "test1", None)),
+      Route(HttpVerb("GET"),
+        PathPattern(Seq(StaticPart("testUrl2"))),
+        HandlerCall("controllers", "Application", true, "test2", None))
+    )
+
+    parser.parse(file("traits_resources.raml")) match {
       case Right(l) =>
         assert(l == ethalon)
       case Left(e) => fail(e.toString())

@@ -1,0 +1,15 @@
+#%RAML 0.8
+title: Example API
+version: v1
+resourceTypes:
+  - playResource:
+      get:
+        description: <<controller>>
+traits:
+  - playAction:
+      description: <<controller>>
+/testUrl1:
+  type: { playResource: { controller: '@controllers.Application.test1' } }
+/testUrl2:
+  get:
+    is: [ playAction: { controller: '@controllers.Application.test2' } ]
