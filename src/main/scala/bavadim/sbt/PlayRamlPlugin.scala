@@ -40,10 +40,7 @@ object PlayRamlPlugin extends AutoPlugin {
           task.copy(forwardsRouter = false, reverseRouter = true)
         }
 
-        def routesSources = {
-          val dirs = (unmanagedResourceDirectories in Compile).value
-          (dirs * "raml").get ++ (dirs * "*.raml").get
-        }
+        val routesSources = ((unmanagedResourceDirectories in Compile).value * "api.raml").get
 
         val thisProjectTasks = routesSources.map { file =>
           RoutesCompilerTask(file, routesImport.value, forwardsRouter = true,
