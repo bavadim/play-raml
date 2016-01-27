@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets
 
 import bavadim.compiler.RouteParser
 import org.raml.model.{ActionType, Resource}
+import org.raml.parser.loader.FileResourceLoader
 import org.raml.parser.visitor.RamlDocumentBuilder
 import play.routes.compiler._
 
@@ -220,8 +221,8 @@ class RAMLRouteParser extends RouteParser {
     }
 
     Try {
-      new RamlDocumentBuilder().build(new ByteArrayInputStream(routesContent.getBytes(StandardCharsets.UTF_8)),
-        file.getPath)
+      new RamlDocumentBuilder(new FileResourceLoader("")).build(
+        new ByteArrayInputStream(routesContent.getBytes(StandardCharsets.UTF_8)), file.getAbsolutePath)
     }.map { raml =>
       Right(fixSlashes(parseResources(raml.getResources.asScala.toMap, "", List())))
     }.recover {

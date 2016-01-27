@@ -30,7 +30,7 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
 
   )
 
-  test("Parser must parse example 1") {
+  test("Parser must parse complex raml from example 1") {
     val ethalon = List(
       Route(HttpVerb("GET"),
         PathPattern(Seq(StaticPart("rootMethod"))),
@@ -51,7 +51,7 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
-  test("Parser must parse example 2") {
+  test("Parser must parse endpoints with parameters (example 2)") {
     val ethalon = List(
       Route(HttpVerb("GET"),
         PathPattern(Seq(StaticPart("user/"), DynamicPart("userId", "[^/]+", true))),
@@ -65,14 +65,14 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
-  test("Parser must parse example 3") {
+  test("Parser must fail on invalid raml (parse example 3)") {
     parser.parse(file("3.raml")) match {
       case Right(l) => fail(l.toString())
       case _ => succeed
     }
   }
 
-  test("Parser must parse example 4") {
+  test("Parser must parse several levels of endpoint defenitions (parse example 4)") {
     val ethalon = List(
       Route(HttpVerb("PUT"),
         PathPattern(Seq(StaticPart("mes/"), DynamicPart("id", "[^/]+", true), StaticPart("/sig"))),
@@ -86,7 +86,7 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     }
   }
 
-  test("Parser must parse example 5") {
+  test("Parser must correctly work with '/' endpoint (parse example 5)") {
     val ethalon = List(
       Route(HttpVerb("GET"),
         PathPattern(Seq(StaticPart("index"))),
@@ -97,6 +97,23 @@ class RAMLRouteParserTest extends FunSuite with Assertions {
     )
 
     parser.parse(file("5.raml")) match {
+      case Right(l) =>
+        assert(l == ethalon)
+      case Left(e) => fail(e.toString())
+    }
+  }
+
+  test("Parser must be able process !include directive (parse example 6)") {
+    val ethalon = List(
+      Route(HttpVerb("GET"),
+        PathPattern(Seq(StaticPart("user/"), DynamicPart("id", "[^/]+", true))),
+        HandlerCall("controllers", "User", true, "user", Some(Seq(Parameter("id", "String", None, None))))),
+      Route(HttpVerb("GET"),
+        PathPattern(Seq(StaticPart("org"))),
+        HandlerCall("controllers", "Org", true, "org", None))
+    )
+
+    parser.parse(file("6.raml")) match {
       case Right(l) =>
         assert(l == ethalon)
       case Left(e) => fail(e.toString())

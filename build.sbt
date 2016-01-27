@@ -1,7 +1,7 @@
 import bintray.Keys._
 
 lazy val commonSettings = Seq(
-  version in ThisBuild := "0.3",
+  version in ThisBuild := "0.4",
   organization in ThisBuild := "bavadim"
 )
 
