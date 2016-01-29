@@ -8,7 +8,7 @@ This plugin inspired by [sbt-play-raml](https://github.com/scalableminds/sbt-pla
 
 - add the following lines to your sbt plugins file project/plugins.sbt:
 
-        addSbtPlugin("bavadim" % "play-raml" % "0.5")
+        addSbtPlugin("bavadim" % "play-raml" % "0.6")
         
 - create your RAML routes file in conf/api.raml 
 - add controller reference in first row of HTTP method description:
