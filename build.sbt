@@ -21,6 +21,7 @@ lazy val root = (project in file(".")).
       "com.typesafe.play" % "routes-compiler_2.10" % "2.4.3",
       "com.typesafe.play" %% "play" % "2.4.3",
       "org.raml" % "raml-parser" % "0.8.12" exclude("org.slf4j", "slf4j-log4j12"),
+      "org.apache.commons" % "commons-lang3" % "3.4",
       "org.scalatest" %% "scalatest" % "3.0.0-M12" % Test),
     addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.3" exclude("org.slf4j", "slf4j-simple") exclude("org.slf4j", "slf4j-log4j12"))
   )

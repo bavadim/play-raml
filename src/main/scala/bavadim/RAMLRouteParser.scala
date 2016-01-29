@@ -4,6 +4,7 @@ import java.io.{ByteArrayInputStream, File}
 import java.nio.charset.StandardCharsets
 
 import bavadim.compiler.RouteParser
+import org.apache.commons.lang3.SystemUtils
 import org.raml.model.{ActionType, Resource}
 import org.raml.parser.loader.FileResourceLoader
 import org.raml.parser.visitor.RamlDocumentBuilder
@@ -221,8 +222,13 @@ class RAMLRouteParser extends RouteParser {
     }
 
     Try {
-      new RamlDocumentBuilder(new FileResourceLoader("")).build(
-        new ByteArrayInputStream(routesContent.getBytes(StandardCharsets.UTF_8)), file.getAbsolutePath)
+      if (SystemUtils.IS_OS_WINDOWS) {
+        new RamlDocumentBuilder().build(
+          new ByteArrayInputStream(routesContent.getBytes(StandardCharsets.UTF_8)), file.getAbsolutePath)
+      } else {
+        new RamlDocumentBuilder(new FileResourceLoader("")).build(
+          new ByteArrayInputStream(routesContent.getBytes(StandardCharsets.UTF_8)), file.getAbsolutePath)
+      }
     }.map { raml =>
       Right(fixSlashes(parseResources(raml.getResources.asScala.toMap, "", List())))
     }.recover {
