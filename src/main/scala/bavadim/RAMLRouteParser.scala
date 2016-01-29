@@ -223,7 +223,7 @@ class RAMLRouteParser extends RouteParser {
 
     Try {
       if (SystemUtils.IS_OS_WINDOWS) {
-        new RamlDocumentBuilder().build(
+        new RamlDocumentBuilder(new FileResourceLoader(file.getParentFile.getAbsolutePath)).build(
           new ByteArrayInputStream(routesContent.getBytes(StandardCharsets.UTF_8)), file.getAbsolutePath)
       } else {
         new RamlDocumentBuilder(new FileResourceLoader("")).build(
